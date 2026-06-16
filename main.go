@@ -1,14 +1,5 @@
 package main
 
-import (
-	"bufio"
-	"fmt"
-	"os"
-	"strings"
-
-	"golang.org/x/crypto/bcrypt"
-)
-
 // LEVEL 1
 // func main() {
 // 	scores := make(map[string]int)
@@ -771,145 +762,145 @@ import (
 // }
 
 // 31
-type User struct {
-	Name     string
-	email    string
-	Password string
-}
+// type User struct {
+// 	Name     string
+// 	email    string
+// 	Password string
+// }
 
-func (u *User) HashPassword(password string) error {
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
+// func (u *User) HashPassword(password string) error {
+// 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+// 	if err != nil {
+// 		return err
+// 	}
 
-	u.Password = string(hash)
-	return nil
-}
+// 	u.Password = string(hash)
+// 	return nil
+// }
 
-func (u *User) Login() bool {
-	reader := bufio.NewReader(os.Stdin)
+// func (u *User) Login() bool {
+// 	reader := bufio.NewReader(os.Stdin)
 
-	fmt.Print("Username: ")
-	username, _ := reader.ReadString('\n')
-	username = strings.TrimSpace(username)
+// 	fmt.Print("Username: ")
+// 	username, _ := reader.ReadString('\n')
+// 	username = strings.TrimSpace(username)
 
-	fmt.Print("Password: ")
-	password, _ := reader.ReadString('\n')
-	password = strings.TrimSpace(password)
+// 	fmt.Print("Password: ")
+// 	password, _ := reader.ReadString('\n')
+// 	password = strings.TrimSpace(password)
 
-	// if username != u.Name {
-	// 	fmt.Println("User not found")
-	// 	return false
-	// }
+// 	// if username != u.Name {
+// 	// 	fmt.Println("User not found")
+// 	// 	return false
+// 	// }
 
-	if bcrypt.CompareHashAndPassword(
-		[]byte(u.Password),
-		[]byte(password),
-	) == nil {
-		fmt.Println("Login successful")
-		return true
-	} else {
-		fmt.Println("Wrong password")
-		return false
-	}
-}
+// 	if bcrypt.CompareHashAndPassword(
+// 		[]byte(u.Password),
+// 		[]byte(password),
+// 	) == nil {
+// 		fmt.Println("Login successful")
+// 		return true
+// 	} else {
+// 		fmt.Println("Wrong password")
+// 		return false
+// 	}
+// }
 
-type Todo struct {
-	Title      string
-	ID         int
-	InProgress bool
-	Done       bool
-}
+// type Todo struct {
+// 	Title      string
+// 	ID         int
+// 	InProgress bool
+// 	Done       bool
+// }
 
-type TodoList struct {
-	Data []Todo
-}
+// type TodoList struct {
+// 	Data []Todo
+// }
 
-type Todos interface {
-	Add(title string)
-	Remove(id int)
-	Edit(id int, title string)
-}
+// type Todos interface {
+// 	Add(title string)
+// 	Remove(id int)
+// 	Edit(id int, title string)
+// }
 
-func (t *Todo) Status() string {
-	if t.Done {
-		return "done"
+// func (t *Todo) Status() string {
+// 	if t.Done {
+// 		return "done"
 
-	} else if t.InProgress {
-		return " inprogress"
+// 	} else if t.InProgress {
+// 		return " inprogress"
 
-	} else {
-		return "no status"
-	}
-}
+// 	} else {
+// 		return "no status"
+// 	}
+// }
 
-func (t *TodoList) Add(title string) {
-	t.Data = append(t.Data, Todo{
-		ID:    len(t.Data),
-		Title: title,
-	})
-}
+// func (t *TodoList) Add(title string) {
+// 	t.Data = append(t.Data, Todo{
+// 		ID:    len(t.Data),
+// 		Title: title,
+// 	})
+// }
 
-func (t *TodoList) Remove(id int) {
-	for i := range t.Data {
-		if t.Data[i].ID == id {
-			t.Data = append(t.Data[:i], t.Data[i+1:]...)
-			fmt.Println(t.Data)
+// func (t *TodoList) Remove(id int) {
+// 	for i := range t.Data {
+// 		if t.Data[i].ID == id {
+// 			t.Data = append(t.Data[:i], t.Data[i+1:]...)
+// 			fmt.Println(t.Data)
 
-			return
-		}
-	}
-}
+// 			return
+// 		}
+// 	}
+// }
 
-func (t *TodoList) Edit(ID int, NewTitle string) {
-	for i := range t.Data {
-		if t.Data[i].ID == ID {
-			t.Data[i].Title = NewTitle
-			return
+// func (t *TodoList) Edit(ID int, NewTitle string) {
+// 	for i := range t.Data {
+// 		if t.Data[i].ID == ID {
+// 			t.Data[i].Title = NewTitle
+// 			return
 
-		}
+// 		}
 
-	}
-}
+// 	}
+// }
 
-func main() {
+// func main() {
 
-	user := User{
-		Name: "alireza",
-	}
+// 	user := User{
+// 		Name: "alireza",
+// 	}
 
-	err := user.HashPassword("1234")
-	if err != nil {
-		return
-	}
-	if !user.Login() {
-		return
-	}
+// 	err := user.HashPassword("1234")
+// 	if err != nil {
+// 		return
+// 	}
+// 	if !user.Login() {
+// 		return
+// 	}
 
-	// fmt.Println("Hashed password:", user.Password)
-	// user.Login()
+// 	// fmt.Println("Hashed password:", user.Password)
+// 	// user.Login()
 
-	list := TodoList{}
+// 	list := TodoList{}
 
-	list.Add("GO GYM")
-	list.Add("drink water")
-	list.Add("take shower ")
+// 	list.Add("GO GYM")
+// 	list.Add("drink water")
+// 	list.Add("take shower ")
 
-	list.Edit(2, "studying go ")
+// 	list.Edit(2, "studying go ")
 
-	fmt.Println(list.Data)
+// 	fmt.Println(list.Data)
 
-	fmt.Println("Before remove:", list.Data)
+// 	fmt.Println("Before remove:", list.Data)
 
-	list.Remove(1)
+// 	list.Remove(1)
 
-	fmt.Println("After remove:", list.Data)
+// 	fmt.Println("After remove:", list.Data)
 
-	list.Data[0].InProgress = true
-	list.Data[1].Done = true
-	for _, t := range list.Data {
-		fmt.Println(t.Status())
-	}
+// 	list.Data[0].InProgress = true
+// 	list.Data[1].Done = true
+// 	for _, t := range list.Data {
+// 		fmt.Println(t.Status())
+// 	}
 
-}
+// }
