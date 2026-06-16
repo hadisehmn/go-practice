@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -9,9 +8,6 @@ import (
 
 	"golang.org/x/crypto/bcrypt"
 )
-
-
-
 
 type User struct {
 	Name     string
