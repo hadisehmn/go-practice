@@ -10,8 +10,7 @@ import (
 )
 
 type User struct {
-	Name     string
-	email    string
+	Username string
 	Password string
 }
 
@@ -25,21 +24,7 @@ func (u *User) HashPassword(password string) error {
 	return nil
 }
 
-func (u *User) Login() bool {
-	reader := bufio.NewReader(os.Stdin)
-
-	fmt.Print("Username: ")
-	username, _ := reader.ReadString('\n')
-	username = strings.TrimSpace(username)
-
-	fmt.Print("Password: ")
-	password, _ := reader.ReadString('\n')
-	password = strings.TrimSpace(password)
-
-	// if username != u.Name {
-	// 	fmt.Println("User not found")
-	// 	return false
-	// }
+func (u *User) Login(password string) bool {
 
 	if bcrypt.CompareHashAndPassword(
 		[]byte(u.Password),
@@ -110,44 +95,70 @@ func (t *TodoList) Edit(ID int, NewTitle string) {
 
 	}
 }
+func (t *TodoList) Print() {
+	for _, item := range t.Data {
+		fmt.Printf("ID:%d | Title:%s | InProgress:%t | Done:%t\n",
+			item.ID, item.Title, item.InProgress, item.Done)
+	}
+}
 
 func main() {
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print("Username: ")
+	username, _ := reader.ReadString('\n')
+	username = strings.TrimSpace(username)
+
+	fmt.Print("Password: ")
+	password, _ := reader.ReadString('\n')
+	password = strings.TrimSpace(password)
 
 	user := User{
-		Name: "alireza",
+		Username: username,
+		Password: password,
 	}
-
-	err := user.HashPassword("1234")
-	if err != nil {
-		return
-	}
-	if !user.Login() {
-		return
-	}
-
-	// fmt.Println("Hashed password:", user.Password)
-	// user.Login()
+	fmt.Println("User created:", user)
 
 	list := TodoList{}
+	fmt.Println("1) Add")
+	fmt.Println("2) Remove")
+	fmt.Println("3) Edit")
+	for {
 
-	list.Add("GO GYM")
-	list.Add("drink water")
-	list.Add("take shower ")
+		var choice int
+		fmt.Print("Choose: ")
+		fmt.Scan(&choice)
 
-	list.Edit(2, "studying go ")
+		switch choice {
 
-	fmt.Println(list.Data)
+		case 1:
+			var title string
+			fmt.Print("Enter title: ")
+			fmt.Scan(&title)
+			list.Add(title)
+			// fmt.Println(list.Data)
+			list.Print()
 
-	fmt.Println("Before remove:", list.Data)
+		case 2:
+			var id int
+			fmt.Print("Enter id: ")
+			fmt.Scan(&id)
+			list.Remove(id)
+			list.Print()
+		case 3:
+			var id int
+			fmt.Scan(&id)
+			var title string
+			fmt.Scan(&title)
 
-	list.Remove(1)
+			list.Edit(id, title)
+			list.Print()
+		default:
+			fmt.Println("Invalid choice")
 
-	fmt.Println("After remove:", list.Data)
+			return
 
-	list.Data[0].InProgress = true
-	list.Data[1].Done = true
-	for _, t := range list.Data {
-		fmt.Println(t.Status())
+		}
 	}
 
 }
