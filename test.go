@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -102,6 +103,21 @@ func (t *TodoList) Print() {
 	}
 }
 
+func (t *TodoList) Save() error {
+
+	data, err := json.Marshal(t)
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile("data.json", data, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 
@@ -123,6 +139,7 @@ func main() {
 	fmt.Println("1) Add")
 	fmt.Println("2) Remove")
 	fmt.Println("3) Edit")
+	fmt.Println("4) showlist")
 	for {
 
 		var choice int
@@ -136,7 +153,7 @@ func main() {
 			fmt.Print("Enter title: ")
 			fmt.Scan(&title)
 			list.Add(title)
-			// fmt.Println(list.Data)
+			list.Save()
 			list.Print()
 
 		case 2:
@@ -144,6 +161,7 @@ func main() {
 			fmt.Print("Enter id: ")
 			fmt.Scan(&id)
 			list.Remove(id)
+			list.Save()
 			list.Print()
 		case 3:
 			var id int
@@ -152,6 +170,9 @@ func main() {
 			fmt.Scan(&title)
 
 			list.Edit(id, title)
+			list.Save()
+			list.Print()
+		case 4:
 			list.Print()
 		default:
 			fmt.Println("Invalid choice")
