@@ -56,17 +56,17 @@ type Todos interface {
 	Edit(id int, title string)
 }
 
-func (t *Todo) Status() string {
-	if t.Done {
-		return "done"
+// func (t *Todo) Status() string {
+// 	if t.Done {
+// 		return "done"
 
-	} else if t.InProgress {
-		return " inprogress"
+// 	} else if t.InProgress {
+// 		return " inprogress"
 
-	} else {
-		return "no status"
-	}
-}
+// 	} else {
+// 		return "no status"
+// 	}
+// }
 
 func (t *TodoList) Add(title string) {
 	t.Data = append(t.Data, Todo{
@@ -86,21 +86,38 @@ func (t *TodoList) Remove(id int) {
 	}
 }
 
-func (t *TodoList) Edit(ID int, NewTitle string) {
+func (t *TodoList) Edit(ID int, NewTitle string) (bool, string) {
 	for i := range t.Data {
 		if t.Data[i].ID == ID {
 			t.Data[i].Title = NewTitle
-			return
+			return true, "edited"
 
 		}
+		if t.Data[i].Done {
+			return true, "done"
+		}
 
+		if t.Data[i].InProgress {
+			return true, "inProgress"
+		}
 	}
+	return false, "not found"
 }
 func (t *TodoList) Print() {
 	for _, item := range t.Data {
 		fmt.Printf("ID:%d | Title:%s | InProgress:%t | Done:%t\n",
 			item.ID, item.Title, item.InProgress, item.Done)
 	}
+}
+
+func (t *TodoList) Lode() error {
+	data, err := os.ReadFile("output.txt")
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(data, t)
+
 }
 
 func (t *TodoList) Save() error {
@@ -110,7 +127,7 @@ func (t *TodoList) Save() error {
 		return err
 	}
 
-	err = os.WriteFile("data.json", data, 0644)
+	err = os.WriteFile("output.txt", data, 0644)
 	if err != nil {
 		return err
 	}
@@ -136,6 +153,7 @@ func main() {
 	fmt.Println("User created:", user)
 
 	list := TodoList{}
+	list.Lode()
 	fmt.Println("1) Add")
 	fmt.Println("2) Remove")
 	fmt.Println("3) Edit")
@@ -165,6 +183,7 @@ func main() {
 			list.Print()
 		case 3:
 			var id int
+			fmt.Print("Enter id: ")
 			fmt.Scan(&id)
 			var title string
 			fmt.Scan(&title)
@@ -174,6 +193,10 @@ func main() {
 			list.Print()
 		case 4:
 			list.Print()
+			if len(list.Data) == 0 {
+				fmt.Println("List is empty")
+
+			}
 		default:
 			fmt.Println("Invalid choice")
 
