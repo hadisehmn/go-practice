@@ -39,6 +39,8 @@ func (u *User) Login(password string) bool {
 	}
 }
 
+// Method 1 :UUID /  id = string
+// ID         string
 type Todo struct {
 	Title      string
 	ID         int
@@ -56,16 +58,16 @@ type Todos interface {
 	Edit(id int, title string)
 }
 
-// func (t *Todo) Status() string {
-// 	if t.Done {
-// 		return "done"
-
-// 	} else if t.InProgress {
-// 		return " inprogress"
-
-// 	} else {
-// 		return "no status"
+//Method 1 : UUID
+// Add creates a new Todo item and appends it to the list.
+// It generates a unique UUID as the ID.
+// func (t *TodoList) Add(title string) {
+// 	todo := Todo{
+// 		ID:    uuid.New().String(),
+// 		Title: title,
 // 	}
+
+// 	t.Data = append(t.Data, todo)
 // }
 
 func (t *TodoList) Add(title string) {
@@ -103,6 +105,9 @@ func (t *TodoList) Edit(ID int, NewTitle string) (bool, string) {
 	}
 	return false, "not found"
 }
+
+// Method 1 : UUID / ID:%s
+// fmt.Printf("ID:%s | Title:%s | InProgress:%t | Done:%t\n",
 func (t *TodoList) Print() {
 	for _, item := range t.Data {
 		fmt.Printf("ID:%d | Title:%s | InProgress:%t | Done:%t\n",
@@ -110,7 +115,7 @@ func (t *TodoList) Print() {
 	}
 }
 
-func (t *TodoList) Lode() error {
+func (t *TodoList) Load() error {
 	data, err := os.ReadFile("output.txt")
 	if err != nil {
 		return err
@@ -153,7 +158,7 @@ func main() {
 	fmt.Println("User created:", user)
 
 	list := TodoList{}
-	list.Lode()
+	list.Load()
 	fmt.Println("1) Add")
 	fmt.Println("2) Remove")
 	fmt.Println("3) Edit")
