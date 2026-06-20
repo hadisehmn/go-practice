@@ -70,11 +70,14 @@ type Todos interface {
 // 	t.Data = append(t.Data, todo)
 // }
 
-func (t *TodoList) Add(title string) {
-	t.Data = append(t.Data, Todo{
-		ID:    len(t.Data),
+func (t *TodoList) Add(title string) Todo {
+	todo := Todo{
+		ID:    len(t.Data) + 1,
 		Title: title,
-	})
+	}
+
+	t.Data = append(t.Data, todo)
+	return todo
 }
 
 func (t *TodoList) Remove(id int) {
