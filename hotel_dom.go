@@ -1,14 +1,13 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
-	"strconv"
-	"strings"
+	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
 )
+
+var users = map[string]User{}
 
 type User struct {
 	Name     string
@@ -41,31 +40,44 @@ type UserService interface {
 	ListRooms() ([]Hotel, error)
 }
 
-func (u *User) SignUp(Password string, Name string) {
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(Password), bcrypt.DefaultCost)
-	u.Password = string(hashedPassword)
-	u.Name = Name
+func SignUp(w http.ResponseWriter, r *http.Request) {
+
+	name := r.FormValue("name")
+	password := r.FormValue("password")
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Fprintln(w, "error")
+		return
+	}
+
+	users[name] = User{
+		Name:     name,
+		Password: string(hashedPassword),
+	}
+
+	fmt.Fprintln(w, "User Created")
 
 }
 
-func (u *User) SingIn(Password string, Name string) bool {
-	if u.Name != Name {
-		if u.Name == Name {
-			fmt.Println("Wrong name")
-			return false
+func SignIn(w http.ResponseWriter, r *http.Request) {
 
-		}
+	name := r.FormValue("name")
 
+	user, ok := users[name]
+	if !ok {
+		fmt.Fprintln(w, "User Not Found")
+		return
 	}
 
+	password := r.FormValue("password")
 	if bcrypt.CompareHashAndPassword(
-		[]byte(u.Password),
-		[]byte(Password)) == nil {
-		fmt.Println("Login Successful")
-		return true
+		[]byte(user.Password),
+		[]byte(password)) == nil {
+		fmt.Fprintln(w, "Login Successful")
+		return
 	} else {
 		fmt.Println("Wrong Password")
-		return false
+		return
 
 	}
 
@@ -73,25 +85,8 @@ func (u *User) SingIn(Password string, Name string) bool {
 
 func main() {
 
-	reader := bufio.NewReader(os.Stdin)
+	http.HandleFunc("/signup", SignUp)
+	http.HandleFunc("/signin", SignIn)
 
-	fmt.Println("Enter Your Name ")
-	username, _ := reader.ReadString('\n')
-	username = strings.TrimSpace(username)
-
-	fmt.Println("Enter Your Phonenumber ")
-	phonenumber, _ := reader.ReadString('\n')
-	phonenumber = strings.TrimSpace(phonenumber)
-	phone, _ := strconv.Atoi(phonenumber)
-
-	fmt.Println("Enter Your Password ")
-	password, _ := reader.ReadString('\n')
-	password = strings.TrimSpace(password)
-
-	user := User{
-		Name:     username,
-		Phone:    phone,
-		Password: password,
-	}
-	fmt.Printf("User created: Name: %s | Phone: %d | Password: %s\n", user.Name, user.Phone, user.Password)
+	http.ListenAndServe(":8080", nil)
 }
