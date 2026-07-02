@@ -7,7 +7,6 @@ A command-line Todo List application built with Go. The application allows users
 - Create, edit, and delete todos
 - View todo list
 - JSON file persistence
-- Password hashing with bcrypt
 - User login verification
 - Modular structs and methods
 - Simple command-line interface
@@ -16,7 +15,6 @@ A command-line Todo List application built with Go. The application allows users
 
 - Go
 - JSON
-- bcrypt
 - Standard Library
 
 ## Project Structure
